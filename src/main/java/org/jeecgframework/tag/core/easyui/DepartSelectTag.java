@@ -1,0 +1,253 @@
+package org.jeecgframework.tag.core.easyui;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.jsp.JspTagException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.TagSupport;
+
+import org.jeecgframework.web.system.pojo.base.TSType;
+import org.jeecgframework.web.system.pojo.base.TSTypegroup;
+import org.jeecgframework.web.system.service.MutiLangServiceI;
+import org.jeecgframework.web.system.service.SystemService;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.fop.fo.expr.MaxFunction;
+import org.jeecgframework.core.util.ApplicationContextUtil;
+import org.jeecgframework.core.util.MutiLangUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.gson.Gson;
+
+/**
+ * 
+ * 部门选择弹出框
+ * 
+ * @author: lijun
+ * @date： 日期：2015-3-1
+ * @version 1.0
+ */
+public class DepartSelectTag extends TagSupport {
+
+	private static final long serialVersionUID = 1;
+    
+	private String readonly;// 只读属性
+	
+	private Boolean minFlag = true;
+	private Boolean maxFlag = true;
+	private Boolean resize = true;
+	
+	private String lblDepartment;
+	
+	private boolean multiFlag = true;// 默认多选
+	
+    public String getLblDepartment() {
+		return lblDepartment;
+	}
+	public void setLblDepartment(String lblDepartment) {
+		this.lblDepartment = lblDepartment;
+	}
+	public String getReadonly() {
+		return readonly;
+	}
+	public void setReadonly(String readonly) {
+		this.readonly = readonly;
+	}
+	
+	public Boolean getMinFlag() {
+		return minFlag;
+	}
+	public void setMinFlag(Boolean minFlag) {
+		this.minFlag = minFlag;
+	}
+	public Boolean getMaxFlag() {
+		return maxFlag;
+	}
+	public void setMaxFlag(Boolean maxFlag) {
+		this.maxFlag = maxFlag;
+	}
+	public Boolean getResize() {
+		return resize;
+	}
+	public void setResize(Boolean resize) {
+		this.resize = resize;
+	}
+
+	public boolean isMultiFlag() {
+		return multiFlag;
+	}
+	public void setMultiFlag(boolean multiFlag) {
+		this.multiFlag = multiFlag;
+	}
+
+	private String selectedNamesInputId; // 用于记录已选择部门编号的input的id
+	public String getSelectedNamesInputId() {
+		return selectedNamesInputId;
+	}
+
+	public void setSelectedNamesInputId(String _selectedNamesInputId) {
+		this.selectedNamesInputId = _selectedNamesInputId;
+	}
+
+	private String selectedIdsInputId; // 用于显示已选择部门名称的input的id
+	public String getSelectedIdsInputId() {
+		return selectedIdsInputId;
+	}
+
+	public void setSelectedIdsInputId(String _selectedIdsInputId) {
+		this.selectedIdsInputId = _selectedIdsInputId;
+	}
+	
+	private String departNameInputWidth; //已选择机构输入框宽度
+	public String getDepartNameInputWidth() {
+		return departNameInputWidth;
+	}
+
+	public void setDepartNameInputWidth(String departNameInputWidth) {
+		
+		this.departNameInputWidth = departNameInputWidth;
+	}
+	
+	
+	private String departNameSpanWidth;// span宽度
+	
+	public String getDepartNameSpanWidth() {
+		return departNameSpanWidth;
+	}
+	public void setDepartNameSpanWidth(String departNameSpanWidth) {
+		this.departNameSpanWidth = departNameSpanWidth;
+	}
+
+
+
+	private String windowWidth; //窗口宽度
+	public String getWindowWidth() {
+		return windowWidth;
+	}
+
+	public void setWindowWidth(String windowWidth) {
+		this.windowWidth = windowWidth;
+	}
+	
+	private String windowHeight; //窗口高度
+	public String getWindowHeight() {
+		return windowHeight;
+	}
+
+	public void setWindowHeight(String windowHeight) {
+		this.windowHeight = windowHeight;
+	}
+	
+	private String departId;
+	private String departName;
+
+	public String getDepartId() {
+		return departId;
+	}
+	public void setDepartId(String departId) {
+		this.departId = departId;
+	}
+	public String getDepartName() {
+		return departName;
+	}
+	public void setDepartName(String departName) {
+		this.departName = departName;
+	}
+	
+	public int doStartTag() throws JspTagException {
+		return EVAL_PAGE;
+	}
+
+	public int doEndTag() throws JspTagException {
+		try {
+			JspWriter out = this.pageContext.getOut();
+			out.print(end().toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return EVAL_PAGE;
+	}
+
+	public StringBuffer end() {
+		
+		StringBuffer sb = new StringBuffer();
+		if (StringUtils.isBlank(selectedNamesInputId)) {
+			selectedNamesInputId = "departname"; // 默认id
+		}
+		if (StringUtils.isBlank(selectedIdsInputId)) {
+			selectedIdsInputId = "orgIds"; // 默认id
+		}
+		//String lblDepartment = MutiLangUtil.getMutiLangInstance().getLang("common.department");
+		if(StringUtils.isBlank(lblDepartment)){
+			lblDepartment = "组织机构";
+		}
+		
+		if(StringUtils.isBlank(departNameInputWidth)){
+			departNameInputWidth = "200px";
+		}
+		
+		if(StringUtils.isBlank(departNameSpanWidth)){
+			departNameSpanWidth = "80px";
+		}
+		if(StringUtils.isBlank(windowWidth)){
+			windowWidth = "400px";
+		}
+		
+		if(StringUtils.isBlank(windowHeight)){
+			windowHeight = "350px";
+		}
+		
+		sb.append("<span style=\"display:-moz-inline-box;display:inline-block;\">");
+		sb.append("<span style=\"vertical-align:middle;display:-moz-inline-box;display:inline-block;width: " + departNameSpanWidth + ";text-align:right;\" title=\"" + lblDepartment + "\"/>");
+		sb.append(lblDepartment + "：");
+		sb.append("</span>");
+		sb.append("<input readonly=\"true\" type=\"text\" id=\"" + selectedNamesInputId + "\" name=\"" + selectedNamesInputId + "\" style=\"width:" + departNameInputWidth  + "\" onclick=\"openDepartmentSelect()\" ");
+		if(StringUtils.isNotBlank(departId)){
+			sb.append(" value=\""+departName+"\"");
+		}
+		sb.append(" />");
+		sb.append("<input id=\"" + selectedIdsInputId + "\" name=\"" + selectedIdsInputId + "\" type=\"hidden\" ");
+		if(StringUtils.isNotBlank(departName)){
+			sb.append(" value=\""+departId+"\"");
+		}
+		sb.append(">");
+		sb.append("</span>");		
+		
+		String commonDepartmentList = MutiLangUtil.getMutiLangInstance().getLang("common.department.list");
+		String commonConfirm = MutiLangUtil.getMutiLangInstance().getLang("common.confirm");
+		String commonCancel = MutiLangUtil.getMutiLangInstance().getLang("common.cancel");
+		
+		sb.append("<script type=\"text/javascript\">");
+		sb.append("function openDepartmentSelect() {");
+		sb.append("    $.dialog.setting.zIndex = 9999; ");
+		sb.append("    $.dialog({content: 'url:departController.do?departSelect&multiFlag=" + multiFlag + "', zIndex: 2100, title: '" + commonDepartmentList + "', min:"+minFlag+", max:" + maxFlag +", resize:"+ resize +", lock: true, width: '" + windowWidth + "', height: '" + windowHeight + "', opacity: 0.4, button: [");
+		sb.append("       {name: '" + commonConfirm + "', callback: callbackDepartmentSelect, focus: true},");
+		sb.append("       {name: '" + commonCancel + "', callback: function (){}}");
+		sb.append("   ]}).zindex();");
+		sb.append("}");
+		
+		sb.append("function callbackDepartmentSelect() {");
+		sb.append("    var iframe = this.iframe.contentWindow;");
+		//update--start--by:jg_renjie--at:20160318 for:#942 【组件封装】组织机构弹出模式，目前是列表，得改造成树方式
+		//sb.append("    var departname = iframe.getdepartListSelections('text');");
+		sb.append(" var treeObj = iframe.$.fn.zTree.getZTreeObj(\"departSelect\");");
+		sb.append(" var nodes = treeObj.getCheckedNodes(true);");
+		sb.append(" if(nodes.length>0){");
+		sb.append(" var ids='',names='';");
+		sb.append("for(i=0;i<nodes.length;i++){");
+		sb.append(" var node = nodes[i];");
+		sb.append(" ids += node.id+',';");
+		sb.append(" names += node.name+',';");
+		sb.append("}if(names.lastIndexOf(',') != -1){names = names.substring(0,names.length - 1)}");
+		sb.append(" $('#" + selectedNamesInputId + "').val(names);");
+		sb.append(" $('#" + selectedNamesInputId + "').blur();");		
+		sb.append(" $('#" + selectedIdsInputId + "').val(ids);");
+		sb.append("}");
+		//update--end--by:jg_renjie--at:20160318 for:#942 【组件封装】组织机构弹出模式，目前是列表，得改造成树方式
+		sb.append("}");
+		sb.append("</script>");
+		return sb;
+	}
+}

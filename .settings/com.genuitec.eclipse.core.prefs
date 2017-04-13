@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+validator.Checked=src/main/resources/online/template/default/html,src/main/webapp
+validator.Unchecked=src/main/resources/online/template/default/html/jform.ftl

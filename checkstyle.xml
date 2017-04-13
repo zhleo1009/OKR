@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN" "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+<!--
+    This configuration file was written by the eclipse-cs plugin configuration editor
+-->
+<!--
+    Checkstyle-Configuration: checkstyle
+    Description: none
+-->
+<module name="Checker">
+    <!--property name="severity" value="Error"/> 定义检查结果是错误还是警告 warning,Error-->
+	<property name="severity" value="warning"/>
+	<property name="charset" value="UTF-8"/>
+	<module name="TreeWalker">
+	    <!-- finalize 必须调用了super.finalize() -->  
+		<module name="SuperFinalize"/>
+		<!--FallThrough 检查switch中case后是否加入了跳出语句，例如：return、break、throw-->
+		<module name="FallThrough"/>
+		<!-- 循环控制变量不能被修改 --> 
+		<module name="ModifiedControlVariable"/>
+		<!-- 不能出现空白区域 --> 
+		<module name="EmptyBlock"/>
+		<!-- 所有区域都要使用大括号。 -->  
+		<module name="NeedBraces"/>
+		<!-- 确保某个class 在被使用时都已经被初始化成默认值(对象是null,数字和字符是0,boolean 变量是false.) -->  
+		<module name="ExplicitInitialization"/>
+		<!-- 检查数组类型的定义是String[] args，而不是String args[] -->  
+		<module name="ArrayTypeStyle"/>
+		<!-- 根据 Sun 编码规范， class 或 interface 中的顺序如下： 1.class 声明。首先是 public,  
+            然后是protected , 然后是 package level （不包括access modifier ） 最后是private .  
+           (多个class放在一个java文件中的情况） 2.变量声明。 首先是 public, 然后是protected然后是 package  
+            level （不包括access modifier ） 最后是private . (多个class放在一个java文件中的情况）  
+            3.构造函数 4.方法  
+        -->
+		<module name="DeclarationOrder"/>
+		<!-- import方面的检查 -->  
+        <!-- import中避免星号"*" --> 
+		<module name="AvoidStarImport"/>
+		<!-- import中避免冗余--> 
+		<module name="RedundantImport"/>
+        <!--  
+        没用的import检查，比如：1.没有被用到2.重复的3.import java.lang的4.import  
+        与该类在同一个package的  
+		-->
+		<module name="UnusedImports"/>
+		<!--定义导入包的顺序-->
+		<module name="ImportOrder">
+		    <property name="groups" value="java,javax,net,org,com"/>
+		    <property name="ordered" value="true"/>
+		    <property name="separated" value="true"/>
+		</module>
+		<!--检查是否有静态import-->
+		<module name="AvoidStaticImport"/>
+		<!--检查方法的javadoc的注释
+        scope: 可以检查的方法的范围，例如：public只能检查public修饰的方法，private可以检查所有的方法
+        allowMissingParamTags: 是否忽略对参数注释的检查
+        allowMissingThrowsTags: 是否忽略对throws注释的检查
+        allowMissingReturnTag: 是否忽略对return注释的检查-->
+		<module name="JavadocMethod">
+			<property name="scope" value="public"/>
+			<property name="suppressLoadErrors" value="true"/>
+		</module>
+		<module name="JavadocMethod">
+			<property name="scope" value="private"/>
+			<property name="suppressLoadErrors" value="true"/>
+		</module>
+		<module name="JavadocMethod">
+			<property name="scope" value="protected"/>
+			<property name="suppressLoadErrors" value="true"/>
+		</module>
+		<!--检查类变量的注释
+          scope: 检查变量的范围，例如：public只能检查public修饰的变量，private可以检查所有的变量
+		-->
+		<module name="JavadocVariable">
+			<property name="scope" value="protected"/>
+		</module>
+		<module name="JavadocVariable">
+			<property name="scope" value="public"/>
+		</module>
+		<!--检查类或者接口的javadoc注释
+        authorFormat: 检查author标签的格式
+        versionFormat: 检查version标签的格式
+        scope: 可以检查的类的范围，例如：public只能检查public修饰的类，private可以检查所有的类
+        excludeScope: 不能检查的类的范围，例如：public，public的类将不被检查，但访问权限小于public的类仍然会检查，其他的权限以此类推
+         tokens: 该属性适用的类型，例如：CLASS_DEF,INTERFACE_DEF-->
+		<module name="JavadocType">
+			<property name="scope" value="public"/>
+			<!-- <property name="authorFormat" value="\S"/> -->
+		</module>
+		<module name="JavadocType">
+			<property name="scope" value="private"/>
+			<!-- <property name="authorFormat" value="\S"/> -->
+		</module>
+		<module name="JavadocType">
+			<property name="scope" value="protected"/>
+			<!-- <property name="authorFormat" value="\S"/> -->
+		</module>
+		<!--检查方法的行数
+         max: 最多容许的行数
+         countEmpty: 是否计算空行
+         tokens: 定义检查的类型
+		-->
+		<module name="MethodLength">
+			<property name="max" value="1000"/>
+		</module>
+		<!-- 不许对方法的参数赋值 -->  
+		<module name="ParameterAssignment"/>
+		<!--方法个数检查-->
+<!-- 		<module name="MethodCount">
+			<property name="maxPublic" value="200"/>
+		</module> -->
+		<!--限制嵌套块的指定的深度（默认为1）。-->
+        <module name="NestedForDepth">
+			<property name="max" value="2"/>
+		</module>
+		<!-- 方法的参数个数不超过5个--> 
+		<module name="ParameterNumber">
+			<property name="max" value="8"/>
+		</module>
+		<!-- 绝对不能容忍魔法数 --> 
+		<module name="MagicNumber">
+			<property name="tokens" value="NUM_INT, NUM_DOUBLE, NUM_FLOAT"/>
+			<property name="ignoreNumbers" value="-1, 0, 1"/>
+		</module>
+		<!-- 每个类都实现了equals()和hashCode() -->  
+		<module name="EqualsHashCode"/>
+        <!--  
+        检查java代码的缩进 默认配置：基本缩进 4个空格，新行的大括号：0。新行的case 4个空格。  
+        --> 
+		<module name="Indentation"/>
+		<!-- 常量名的检查 -->  
+		<module name="ConstantName"/>
+		<!-- 类型(Class或Interface)名的检查 -->  
+		<module name="TypeName">
+			<property name="format" value="^[A-Z][a-zA-Z0-9]*$"/>
+			<property name="tokens" value="INTERFACE_DEF"/>
+		</module>
+		<!-- 定义抽象类的命名规则-->
+<!-- 		<module name="AbstractClassName">
+			<property name="format" value="^(Abstract|Base)[A-Z][a-zA-Z0-9]*$"/>
+		</module> -->
+		<!--定义方法名的命名规则-->
+		<module name="MethodName">
+			<property name="format" value="^[a-z][A-Z][a-zA-Z0-9]{0,28}||(main)$"/>
+		</module>
+		<!-- 接口名的检查 -->  
+		<module name="TypeName">
+			<property name="format" value="^[A-Z][a-zA-Z0-9]*$"/>
+			<property name="tokens" value="INTERFACE_DEF"/>
+		</module>
+		<!-- 类型名的检查 -->  
+		<module name="TypeName">
+			<property name="format" value="^[A-Z][a-zA-Z0-9]{0,39}$"/>
+			<property name="tokens" value="CLASS_DEF"/>
+		</module>
+	</module>
+	<!--检查tab键入输入是否为四个空格代替-->
+	<module name="FileTabCharacter"/>
+	<!--检查文件大小-->
+	<module name="FileLength"/>
+</module>

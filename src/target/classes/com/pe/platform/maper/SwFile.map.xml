@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.pe.platform.model.swfile.Swfile">
+	<resultMap id="Swfile" type="com.pe.platform.model.swfile.Swfile">
+		<id property="fileid" column="fileid" jdbcType="NUMERIC"/>
+		<result property="typeid" column="typeid" jdbcType="NUMERIC"/>
+		<result property="filename" column="fileiame" jdbcType="VARCHAR"/>
+		<result property="filepath" column="filepath" jdbcType="VARCHAR"/>
+		<result property="createtime" column="createtime" jdbcType="TIMESTAMP"/>
+		<result property="ext" column="ext" jdbcType="VARCHAR"/>
+		<result property="filetype" column="filetype" jdbcType="VARCHAR"/>
+		<result property="note" column="note" jdbcType="VARCHAR"/>
+		<result property="creatorid" column="creatorid" jdbcType="NUMERIC"/>
+		<result property="creator" column="creator" jdbcType="VARCHAR"/>
+		<result property="totalbytes" column="totalbytes" jdbcType="NUMERIC"/>
+		<result property="maintableid" column="maintableid" jdbcType="NUMERIC"/>
+		<result property="modelName" column="modelName" jdbcType="VARCHAR"/>
+		<result property="link" column="link" jdbcType="VARCHAR"/>
+		<result property="detail" column="detail" jdbcType="VARCHAR"/>
+		<result property="flag" column="flag" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<sql id="columns">
+		fileid,typeid,filename,filepath,createtime,ext,filetype,note,creatorid,creator,totalbytes,maintableid,modelName,link,detail,flag
+	</sql>
+	<insert id="add" parameterType="com.pe.platform.model.swfile.Swfile">
+		INSERT INTO sw_file
+		(<include refid="columns"/>)
+		VALUES
+		(#{fileid,jdbcType=NUMERIC}, #{typeid,jdbcType=NUMERIC}, #{filename,jdbcType=VARCHAR}, #{filepath,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{ext,jdbcType=VARCHAR}, #{filetype,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, #{creatorid,jdbcType=NUMERIC}, #{creator,jdbcType=VARCHAR}, #{totalbytes,jdbcType=NUMERIC}, #{maintableid,jdbcType=NUMERIC}, #{modelName,jdbcType=VARCHAR}, #{link,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR}, #{flag,jdbcType=VARCHAR})
+	</insert>
+	
+	<delete id="delById" parameterType="java.lang.Long">
+		DELETE FROM SW_FILE 
+		WHERE
+		fileId=#{fileId}
+	</delete>
+	
+	<update id="update" parameterType="com.pe.platform.model.swfile.Swfile">
+		UPDATE sys_file SET
+		typeId=#{typeId,jdbcType=NUMERIC} , 
+		fileName=#{fileName,jdbcType=VARCHAR} , 
+		filePath=#{filePath,jdbcType=VARCHAR} , 
+		createtime=#{createtime,jdbcType=TIMESTAMP} , 
+		ext=#{ext,jdbcType=VARCHAR} , 
+		fileType=#{fileType,jdbcType=VARCHAR} , 
+		note=#{note,jdbcType=VARCHAR} , 
+		creatorId=#{creatorId,jdbcType=NUMERIC} , 
+		creator=#{creator,jdbcType=VARCHAR} , 
+		totalBytes=#{totalBytes,jdbcType=NUMERIC} , 
+		delFlag=#{delFlag,jdbcType=NUMERIC}, 
+		modelName=#{modelName,jdbcType=VARCHAR} , 
+		link=#{link,jdbcType=VARCHAR} ,
+		detail=#{detail,jdbcType=VARCHAR} ,
+		flag=#{flag,jdbcType=VARCHAR}
+		WHERE
+		fileId=#{fileId}
+	</update>
+	<sql id="dynamicWhere">
+		<where>
+			<if test="@Ognl@isNotEmpty(typeId)"> AND typeId  =#{typeId} </if>
+			<if test="@Ognl@isNotEmpty(fileName)"> AND fileName  LIKE '%${fileName}%'  </if>
+			<if test="@Ognl@isNotEmpty(ext)"> AND ext  LIKE '%${ext}%'  </if>
+			<if test="@Ognl@isNotEmpty(begincreatetime)"> AND createtime  >=#{begincreatetime,jdbcType=DATE} </if>
+			<if test="@Ognl@isNotEmpty(endcreatetime)"> AND createtime <![CDATA[ <=#{endcreatetime,jdbcType=DATE}]]> </if>
+			<if test="@Ognl@isNotEmpty(flag)"> AND flag  LIKE '%${flag}%'  </if>
+		</where>
+	</sql>
+	<select id="getAll" resultMap="Swfile">
+		SELECT <include refid="columns"/>
+		FROM SW_FILE   
+		<include refid="dynamicWhere" />
+		order by modelName asc,ext asc,typeId desc
+	</select>
+	<select id="getById" parameterType="java.lang.Long" resultMap="Swfile">
+		SELECT  <include refid="columns"/>
+		FROM SW_FILE 
+		WHERE
+		fileId=#{fileId}
+	</select>
+	
+	<select id="getbymaintableid" resultMap="Swfile">
+		select <include refid="columns"/> from sw_file where maintableid= #{maintableid}
+	</select>
+	<select id="getByMainTableIdAndFlag" parameterType="java.lang.Long" resultMap="Swfile">
+		select <include refid="columns"/> from sw_file where maintableid= #{maintableid} and flag LIKE '%${flag}%'
+	</select>
+	<select id="getByFilePath" parameterType="java.lang.String" resultMap="Swfile">
+		SELECT <include refid="columns"/>
+		FROM Sw_FILE s
+		WHERE
+		s.filePath=#{f.filePath}
+	</select>
+	<select id="groupSwfileType" resultMap="Swfile">
+		select t.ext from sw_file t group by t.ext order by t.ext
+	</select>
+</mapper>
